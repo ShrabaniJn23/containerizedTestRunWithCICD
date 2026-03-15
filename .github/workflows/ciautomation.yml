@@ -34,7 +34,7 @@ jobs:
         run: mvn clean install -DskipTests
 
       - name: Start Selenium Grid
-        run: docker-compose up -d
+        run: docker compose up -d
 
       - name: Wait for Selenium Grid to be ready
         run: |
@@ -47,7 +47,7 @@ jobs:
 
       - name: Stop Selenium Grid
         if: always()
-        run: docker-compose down
+        run: docker compose down
 
       - name: Publish Test Results
         if: always()
