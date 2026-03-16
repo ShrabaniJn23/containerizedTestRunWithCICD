@@ -5,8 +5,8 @@ name: CI Automation with Docker
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
+ # pull_request:
+  #  branches: [ main ]
 
 jobs:
   build-and-test:
@@ -45,6 +45,16 @@ jobs:
       - name: Run Tests
         run: mvn test -Dconfig.mode=remote
 
+      - name: Wait for videos to be processed
+        if: always()
+        run: sleep 10
+          
+      - name: Check video files
+        if: always()
+        run: |
+          echo "Listing all files in target/videos..."
+          ls -laR target/videos/ || echo "No videos directory found"
+
       - name: Stop Selenium Grid
         if: always()
         run: docker compose down
@@ -55,3 +65,11 @@ jobs:
         with:
           name: test-results
           path: target/surefire-reports/
+
+      - name: Publish Test Videos
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-videos
+          path: target/videos/
+          if-no-files-found: warn

@@ -39,7 +39,7 @@ services:
       - chrome
     environment:
       DISPLAY_CONTAINER_NAME: selenium-chrome-node
-      FILE_NAME: chrome-video.mp4
+      SE_VIDEO_FILE_NAME: auto
     volumes:
       - ./target/videos:/videos
     networks:
@@ -70,7 +70,7 @@ services:
       - firefox
     environment:
       DISPLAY_CONTAINER_NAME: selenium-firefox-node
-      FILE_NAME: firefox-video.mp4
+      SE_VIDEO_FILE_NAME: auto
     volumes:
       - ./target/videos:/videos
     networks:
@@ -101,7 +101,7 @@ services:
       - edge
     environment:
       DISPLAY_CONTAINER_NAME: selenium-edge-node
-      FILE_NAME: edge-video.mp4
+      SE_VIDEO_FILE_NAME: auto
     volumes:
       - ./target/videos:/videos
     networks:
