@@ -49,11 +49,19 @@ jobs:
         if: always()
         run: sleep 10
           
-      - name: Check video files
+      - name: Copy videos from containers
         if: always()
         run: |
-          echo "Listing all files in target/videos..."
-          ls -laR target/videos/ || echo "No videos directory found"
+          echo "Creating videos directory..."
+          mkdir -p target/videos
+          
+          echo "Copying videos from containers..."
+          docker cp chrome-video:/videos/. target/videos/ 2>/dev/null || echo "No chrome videos"
+          docker cp firefox-video:/videos/. target/videos/ 2>/dev/null || echo "No firefox videos"
+          docker cp edge-video:/videos/. target/videos/ 2>/dev/null || echo "No edge videos"
+          
+          echo "Listing copied files..."
+          ls -laR target/videos/
 
       - name: Stop Selenium Grid
         if: always()
