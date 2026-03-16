@@ -26,14 +26,22 @@ services:
       SE_NODE_MAX_SESSIONS: 5
       SE_NODE_SESSION_TIMEOUT: 300
       SE_SESSION_REQUEST_TIMEOUT: 300
-      SE_DISPLAY_NUM: 100
-      SE_VNC_PORT: 5900
-      SE_VIDEO_RECORD: "true"
-    volumes:
-      - ./target/videos:/videos
     shm_size: 2gb
     ports:
-      - "7900:5900"  # VNC port for viewing browser
+      - "7900:7900"
+    networks:
+      - selenium-network
+
+  chrome-video:
+    image: selenium/video:ffmpeg-6.1-20240402
+    container_name: chrome-video
+    depends_on:
+      - chrome
+    environment:
+      DISPLAY_CONTAINER_NAME: selenium-chrome-node
+      FILE_NAME: chrome-video.mp4
+    volumes:
+      - ./target/videos:/videos
     networks:
       - selenium-network
 
@@ -49,14 +57,22 @@ services:
       SE_NODE_MAX_SESSIONS: 5
       SE_NODE_SESSION_TIMEOUT: 300
       SE_SESSION_REQUEST_TIMEOUT: 300
-      SE_DISPLAY_NUM: 101
-      SE_VNC_PORT: 5901
-      SE_VIDEO_RECORD: "true"
-    volumes:
-      - ./target/videos:/videos
     shm_size: 2gb
     ports:
-      - "7901:5901"  # VNC port for viewing browser
+      - "7901:7900"
+    networks:
+      - selenium-network
+
+  firefox-video:
+    image: selenium/video:ffmpeg-6.1-20240402
+    container_name: firefox-video
+    depends_on:
+      - firefox
+    environment:
+      DISPLAY_CONTAINER_NAME: selenium-firefox-node
+      FILE_NAME: firefox-video.mp4
+    volumes:
+      - ./target/videos:/videos
     networks:
       - selenium-network
 
@@ -72,14 +88,22 @@ services:
       SE_NODE_MAX_SESSIONS: 5
       SE_NODE_SESSION_TIMEOUT: 300
       SE_SESSION_REQUEST_TIMEOUT: 300
-      SE_DISPLAY_NUM: 102
-      SE_VNC_PORT: 5902
-      SE_VIDEO_RECORD: "true"
-    volumes:
-      - ./target/videos:/videos
     shm_size: 2gb
     ports:
-      - "7902:5902"  # VNC port for viewing browser
+      - "7902:7900"
+    networks:
+      - selenium-network
+
+  edge-video:
+    image: selenium/video:ffmpeg-6.1-20240402
+    container_name: edge-video
+    depends_on:
+      - edge
+    environment:
+      DISPLAY_CONTAINER_NAME: selenium-edge-node
+      FILE_NAME: edge-video.mp4
+    volumes:
+      - ./target/videos:/videos
     networks:
       - selenium-network
 

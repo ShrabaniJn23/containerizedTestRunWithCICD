@@ -79,23 +79,17 @@ public class TestHooks {
             
             if ("firefox".equalsIgnoreCase(browserName)) {
                 FirefoxOptions options = new FirefoxOptions();
-                options.setCapability("se:recordVideo", true);
-                options.setCapability("se:screenResolution", "1920x1080");
                 driver = new RemoteWebDriver(gridUrl, options);
-                System.out.println("Firefox Remote WebDriver connected successfully with video recording enabled");
+                System.out.println("Firefox Remote WebDriver connected successfully");
             } else if ("edge".equalsIgnoreCase(browserName)) {
                 EdgeOptions options = new EdgeOptions();
-                options.setCapability("se:recordVideo", true);
-                options.setCapability("se:screenResolution", "1920x1080");
                 driver = new RemoteWebDriver(gridUrl, options);
-                System.out.println("Edge Remote WebDriver connected successfully with video recording enabled");
+                System.out.println("Edge Remote WebDriver connected successfully");
             } else {
                 ChromeOptions options = new ChromeOptions();
                 options.addArguments("--remote-allow-origins=*");
-                options.setCapability("se:recordVideo", true);
-                options.setCapability("se:screenResolution", "1920x1080");
                 driver = new RemoteWebDriver(gridUrl, options);
-                System.out.println("Chrome Remote WebDriver connected successfully with video recording enabled");
+                System.out.println("Chrome Remote WebDriver connected successfully");
             }
             
             return driver;
