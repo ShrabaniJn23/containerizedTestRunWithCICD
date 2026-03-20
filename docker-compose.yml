@@ -26,6 +26,7 @@ services:
       SE_NODE_MAX_SESSIONS: 5
       SE_NODE_SESSION_TIMEOUT: 300
       SE_SESSION_REQUEST_TIMEOUT: 300
+      SE_NODE_ENABLE_VIDEO: true
     shm_size: 2gb
     ports:
       - "7900:7900"
@@ -40,10 +41,12 @@ services:
     environment:
       DISPLAY_CONTAINER_NAME: selenium-chrome-node
       SE_VIDEO_FILE_NAME: auto
+      SE_VIDEO_FILE_NAME_PREFIX: chrome
+      SE_VIDEO_POLL_INTERVAL: 1000
+      SE_VIDEO_FRAME_RATE: 10
     volumes:
       - ./target/videos:/videos
-    networks:
-      - selenium-network
+    network_mode: service:chrome
 
   firefox:
     image: selenium/node-firefox:4.15.0
@@ -57,6 +60,7 @@ services:
       SE_NODE_MAX_SESSIONS: 5
       SE_NODE_SESSION_TIMEOUT: 300
       SE_SESSION_REQUEST_TIMEOUT: 300
+      SE_NODE_ENABLE_VIDEO: true
     shm_size: 2gb
     ports:
       - "7901:7900"
@@ -71,10 +75,12 @@ services:
     environment:
       DISPLAY_CONTAINER_NAME: selenium-firefox-node
       SE_VIDEO_FILE_NAME: auto
+      SE_VIDEO_FILE_NAME_PREFIX: firefox
+      SE_VIDEO_POLL_INTERVAL: 1000
+      SE_VIDEO_FRAME_RATE: 10
     volumes:
       - ./target/videos:/videos
-    networks:
-      - selenium-network
+    network_mode: service:firefox
 
   edge:
     image: selenium/node-edge:4.15.0
@@ -88,6 +94,7 @@ services:
       SE_NODE_MAX_SESSIONS: 5
       SE_NODE_SESSION_TIMEOUT: 300
       SE_SESSION_REQUEST_TIMEOUT: 300
+      SE_NODE_ENABLE_VIDEO: true
     shm_size: 2gb
     ports:
       - "7902:7900"
@@ -102,10 +109,12 @@ services:
     environment:
       DISPLAY_CONTAINER_NAME: selenium-edge-node
       SE_VIDEO_FILE_NAME: auto
+      SE_VIDEO_FILE_NAME_PREFIX: edge
+      SE_VIDEO_POLL_INTERVAL: 1000
+      SE_VIDEO_FRAME_RATE: 10
     volumes:
       - ./target/videos:/videos
-    networks:
-      - selenium-network
+    network_mode: service:edge
 
 networks:
   selenium-network:
