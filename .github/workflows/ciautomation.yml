@@ -79,20 +79,13 @@ jobs:
           echo "=== Checking videos inside edge-video container ==="
           docker exec edge-video ls -la /videos || echo "Cannot access edge-video container"
           
-      - name: Copy videos from containers
+      - name: Ensure videos directory exists
         if: always()
         run: |
-          echo "Creating videos directory..."
           mkdir -p target/videos
+          echo "=== Listing target/videos directory ==="
+          ls -la target/videos/ || echo "Directory is empty"
           
-          echo "Copying videos from containers..."
-          docker cp chrome-video:/videos/. target/videos/ 2>/dev/null || echo "No chrome videos"
-          docker cp firefox-video:/videos/. target/videos/ 2>/dev/null || echo "No firefox videos"
-          docker cp edge-video:/videos/. target/videos/ 2>/dev/null || echo "No edge videos"
-          
-          echo "Listing copied files..."
-          ls -laR target/videos/
-
       - name: Stop Selenium Grid
         if: always()
         run: docker compose down
