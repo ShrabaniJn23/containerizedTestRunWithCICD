@@ -12,6 +12,12 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
+    env:
+      ENVIRONMENT: main
+      CONFIG_MODE: remote
+      GRID_URL: http://localhost:4444
+      BROWSER: chrome
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -43,11 +49,35 @@ jobs:
           echo "Selenium Grid is ready!"
 
       - name: Run Tests
-        run: mvn test -Dconfig.mode=remote
+        run: mvn test "-Denvironment=${{ env.ENVIRONMENT }}" "-Dconfig.mode=${{ env.CONFIG_MODE }}" "-Ddocker.host=${{ env.GRID_URL }}" "-Dbrowser=${{ env.BROWSER }}"
 
       - name: Wait for videos to be processed
         if: always()
         run: sleep 10
+      
+      - name: Debug video containers
+        if: always()
+        run: |
+          echo "=== Checking running containers ==="
+          docker ps
+          
+          echo "=== Chrome video container logs ==="
+          docker logs chrome-video
+          
+          echo "=== Firefox video container logs ==="
+          docker logs firefox-video
+          
+          echo "=== Edge video container logs ==="
+          docker logs edge-video
+          
+          echo "=== Checking videos inside chrome-video container ==="
+          docker exec chrome-video ls -la /videos || echo "Cannot access chrome-video container"
+          
+          echo "=== Checking videos inside firefox-video container ==="
+          docker exec firefox-video ls -la /videos || echo "Cannot access firefox-video container"
+          
+          echo "=== Checking videos inside edge-video container ==="
+          docker exec edge-video ls -la /videos || echo "Cannot access edge-video container"
           
       - name: Copy videos from containers
         if: always()

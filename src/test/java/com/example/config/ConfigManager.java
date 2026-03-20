@@ -9,11 +9,14 @@ public class ConfigManager {
     private static final String CONFIG_FILE = "config.properties";
 
     static {
-        try {
-            InputStream input = ConfigManager.class.getClassLoader().getResourceAsStream(CONFIG_FILE);
+        loadDefaultConfig();
+        loadEnvProfile();
+    }
+
+    private static void loadDefaultConfig() {
+        try (InputStream input = ConfigManager.class.getClassLoader().getResourceAsStream(CONFIG_FILE)) {
             if (input != null) {
                 properties.load(input);
-                input.close();
             } else {
                 System.err.println("config.properties not found in classpath");
             }
@@ -22,20 +25,76 @@ public class ConfigManager {
         }
     }
 
+    private static void loadEnvProfile() {
+        String env = getSystemOrEnv("environment", "ENVIRONMENT", "default");
+        if (env == null || env.trim().isEmpty()) {
+            env = "default";
+        }
+
+        if (!"default".equalsIgnoreCase(env)) {
+            String profileFile = String.format("config.%s.properties", env.trim().toLowerCase());
+            try (InputStream input = ConfigManager.class.getClassLoader().getResourceAsStream(profileFile)) {
+                if (input != null) {
+                    Properties profile = new Properties();
+                    profile.load(input);
+                    properties.putAll(profile);
+                    System.out.println("Loaded environment profile: " + profileFile);
+                } else {
+                    System.out.println("Environment file not found: " + profileFile + "; using defaults");
+                }
+            } catch (IOException e) {
+                System.err.println("Error loading " + profileFile + ": " + e.getMessage());
+            }
+        }
+    }
+
+    private static String getSystemOrEnv(String propertyKey, String envKey, String defaultValue) {
+        String value = System.getProperty(propertyKey);
+        if (value != null && !value.trim().isEmpty()) {
+            return value.trim();
+        }
+        value = System.getenv(envKey);
+        if (value != null && !value.trim().isEmpty()) {
+            return value.trim();
+        }
+        value = properties.getProperty(propertyKey);
+        if (value != null && !value.trim().isEmpty()) {
+            return value.trim();
+        }
+        return defaultValue;
+    }
+
     public static String getProperty(String key) {
-        return properties.getProperty(key);
+        String value = System.getProperty(key);
+        if (value != null && !value.trim().isEmpty()) {
+            return value.trim();
+        }
+
+        String envKey = key.toUpperCase().replace('.', '_');
+        value = System.getenv(envKey);
+        if (value != null && !value.trim().isEmpty()) {
+            return value.trim();
+        }
+
+        value = properties.getProperty(key);
+        if (value != null && !value.trim().isEmpty()) {
+            return value.trim();
+        }
+
+        return null;
     }
 
     public static String getProperty(String key, String defaultValue) {
-        return properties.getProperty(key, defaultValue);
+        String value = getProperty(key);
+        return value != null ? value : defaultValue;
     }
 
     public static boolean getBooleanProperty(String key, boolean defaultValue) {
-        String value = properties.getProperty(key);
-        if (value == null) {
+        String value = getProperty(key);
+        if (value == null || value.trim().isEmpty()) {
             return defaultValue;
         }
-        return Boolean.parseBoolean(value);
+        return Boolean.parseBoolean(value.trim());
     }
 
     public static String getDriverMode() {
